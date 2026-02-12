@@ -14,6 +14,7 @@ class Product extends Model
         'unit_id',
         'name',
         'sku',
+        'price',
         'alert_qty',
         'status',
     ];
@@ -47,8 +48,9 @@ class Product extends Model
     {
         return $this->hasMany(StockLog::class);
     }
+
     public function purchaseItems()
-{
-    return $this->hasMany(PurchaseItem::class);
-}
+    {
+        return $this->hasMany(PurchaseItem::class);
+    }
 }
