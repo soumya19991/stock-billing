@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
-use App\Models\Product;
 use App\Models\Vendor;
 use App\Services\StockService;
 use Illuminate\Http\Request;
@@ -55,7 +55,7 @@ class PurchaseOrderController extends Controller
         DB::transaction(function () use ($request) {
 
             $po = PurchaseOrder::create([
-                'po_no' => 'PO-' . time(),
+                'po_no' => 'PO-'.time(),
                 'vendor_id' => $request->vendor_id,
                 'po_date' => $request->po_date,
                 'note' => $request->note,
@@ -66,7 +66,9 @@ class PurchaseOrderController extends Controller
             $grandTotal = 0;
 
             foreach ($request->items as $item) {
-                if ($item['qty'] <= 0) continue;
+                if ($item['qty'] <= 0) {
+                    continue;
+                }
 
                 $lineTotal = $item['qty'] * $item['cost_price'];
 
@@ -115,8 +117,8 @@ class PurchaseOrderController extends Controller
         DB::transaction(function () use ($purchaseOrder) {
 
             $purchase = Purchase::create([
+                'purchase_no' => 'PUR-'.date('Ymd').'-'.rand(1000, 9999),
                 'vendor_id' => $purchaseOrder->vendor_id,
-                'invoice_no' => 'GRN-' . time(),
                 'purchase_date' => now(),
                 'total' => $purchaseOrder->total,
             ]);
@@ -131,11 +133,10 @@ class PurchaseOrderController extends Controller
                     'total' => $item->total,
                 ]);
 
-                // 🔥 STOCK IN (HERE, NOT IN PO)
                 StockService::increase(
                     $item->product_id,
                     $item->qty,
-                    'PO Converted #' . $purchaseOrder->po_no
+                    'PO Converted #'.$purchaseOrder->po_no
                 );
             }
         });

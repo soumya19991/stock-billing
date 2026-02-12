@@ -8,10 +8,10 @@ use App\Http\Controllers\Admin\PurchaseOrderController;
 use App\Http\Controllers\Admin\PurchaseReturnController;
 use App\Http\Controllers\Admin\SalesInvoiceController;
 use App\Http\Controllers\Admin\SalesOrderController;
+use App\Http\Controllers\Admin\SalesReturnController;
 use App\Http\Controllers\Admin\UnitController;
 use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\Admin\SalesReturnController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -72,7 +72,7 @@ Route::middleware('admin')->group(function () {
     Route::get('admin/purchase-returns', [PurchaseReturnController::class, 'index'])->name('admin.purchase-returns.index');
     Route::get('admin/purchase-returns/create', [PurchaseReturnController::class, 'create'])->name('admin.purchase-returns.create');
     Route::post('admin/purchase-returns', [PurchaseReturnController::class, 'store'])->name('admin.purchase-returns.store');
-    Route::get('admin/purchase-returns/{return}', [PurchaseReturnController::class, 'show'])->name('admin.purchase-returns.show');
+    Route::get('admin/purchase-returns/{purchaseReturn}', [PurchaseReturnController::class, 'show'])->name('admin.purchase-returns.show');
     Route::get(
         'admin/purchase-returns/{purchaseReturn}/pdf',
         [PurchaseReturnController::class, 'pdf']
@@ -141,27 +141,26 @@ Route::middleware('admin')->group(function () {
     )->name('admin.sales-invoices.show');
 
     Route::get(
-    'admin/sales-invoices/{invoice}/pdf',
-    [SalesInvoiceController::class, 'pdf']
-)->name('admin.sales-invoices.pdf');
+        'admin/sales-invoices/{invoice}/pdf',
+        [SalesInvoiceController::class, 'pdf']
+    )->name('admin.sales-invoices.pdf');
 
+    // seles return routes will be added here later
+    Route::get('admin/sales-returns', [SalesReturnController::class, 'index'])
+        ->name('admin.sales-returns.index');
 
-//seles return routes will be added here later
-Route::get('admin/sales-returns', [SalesReturnController::class, 'index'])
-    ->name('admin.sales-returns.index');
+    Route::get(
+        'admin/sales-invoices/{invoice}/return',
+        [SalesReturnController::class, 'create']
+    )->name('admin.sales-returns.create');
 
-Route::get(
-    'admin/sales-invoices/{invoice}/return',
-    [SalesReturnController::class, 'create']
-)->name('admin.sales-returns.create');
+    Route::post('admin/sales-returns', [SalesReturnController::class, 'store'])
+        ->name('admin.sales-returns.store');
 
-Route::post('admin/sales-returns', [SalesReturnController::class, 'store'])
-    ->name('admin.sales-returns.store');
-
-Route::get(
-    'admin/sales-returns/{salesReturn}',
-    [SalesReturnController::class, 'show']
-)->name('admin.sales-returns.show');
+    Route::get(
+        'admin/sales-returns/{salesReturn}',
+        [SalesReturnController::class, 'show']
+    )->name('admin.sales-returns.show');
 
     // Route::get('admin/stock/index', [StockController::class, 'index'])->name('admin.stocks.index');
     // Route::get('admin/stock/create', [StockController::class, 'create'])->name('admin.stocks.create');
