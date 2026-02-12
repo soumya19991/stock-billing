@@ -20,7 +20,7 @@ class ProductController extends Controller
             'category',
             'unit',
             'stock',
-            'latestPrice'
+            'latestPrice',
         ])->latest()->get();
 
         return view('admin.product.index', compact('products'));
@@ -38,14 +38,14 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category_id'    => 'required|exists:categories,id',
-            'unit_id'        => 'required|exists:units,id',
-            'name'           => 'required|string|max:255',
-            'sku'            => 'required|string|max:100|unique:products,sku',
-            'cost_price'     => 'required|numeric|min:0',
-            'selling_price'  => 'required|numeric|min:0',
-            'alert_qty'      => 'nullable|numeric|min:0',
-            'status'         => 'required|boolean',
+            'category_id' => 'required|exists:categories,id',
+            'unit_id' => 'required|exists:units,id',
+            'name' => 'required|string|max:255',
+            'sku' => 'required|string|max:100|unique:products,sku',
+            'cost_price' => 'required|numeric|min:0',
+            'selling_price' => 'required|numeric|min:0',
+            'alert_qty' => 'nullable|numeric|min:0',
+            'status' => 'required|boolean',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -53,24 +53,25 @@ class ProductController extends Controller
             // Create Product
             $product = Product::create([
                 'category_id' => $request->category_id,
-                'unit_id'     => $request->unit_id,
-                'name'        => $request->name,
-                'sku'         => $request->sku,
-                'alert_qty'   => $request->alert_qty ?? 0,
-                'status'      => $request->status,
+                'unit_id' => $request->unit_id,
+                'name' => $request->name,
+                'sku' => $request->sku,
+                'price' => $request->cost_price, // IMPORTANT
+                'alert_qty' => $request->alert_qty ?? 0,
+                'status' => $request->status,
             ]);
 
             // Create Initial Price
             ProductPrice::create([
-                'product_id'    => $product->id,
-                'cost_price'    => $request->cost_price,
+                'product_id' => $product->id,
+                'cost_price' => $request->cost_price,
                 'selling_price' => $request->selling_price,
             ]);
 
             // Create Stock
             Stock::create([
                 'product_id' => $product->id,
-                'quantity'   => 0,
+                'quantity' => 0,
             ]);
         });
 
@@ -93,36 +94,36 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $request->validate([
-            'category_id'    => 'required|exists:categories,id',
-            'unit_id'        => 'required|exists:units,id',
-            'name'           => 'required|string|max:255',
-            'cost_price'     => 'required|numeric|min:0',
-            'selling_price'  => 'required|numeric|min:0',
-            'alert_qty'      => 'nullable|numeric|min:0',
-            'status'         => 'required|boolean',
+            'category_id' => 'required|exists:categories,id',
+            'unit_id' => 'required|exists:units,id',
+            'name' => 'required|string|max:255',
+            'cost_price' => 'required|numeric|min:0',
+            'selling_price' => 'required|numeric|min:0',
+            'alert_qty' => 'nullable|numeric|min:0',
+            'status' => 'required|boolean',
         ]);
 
         DB::transaction(function () use ($request, $product) {
 
-            // Update Product info
+            // update product
             $product->update([
                 'category_id' => $request->category_id,
-                'unit_id'     => $request->unit_id,
-                'name'        => $request->name,
-                'alert_qty'   => $request->alert_qty ?? 0,
-                'status'      => $request->status,
+                'unit_id' => $request->unit_id,
+                'name' => $request->name,
+                'price' => $request->cost_price,
+                'alert_qty' => $request->alert_qty ?? 0,
+                'status' => $request->status,
             ]);
 
-            // Add NEW price record (price history)
+            // add new price record (history maintained)
             ProductPrice::create([
-                'product_id'    => $product->id,
-                'cost_price'    => $request->cost_price,
+                'product_id' => $product->id,
+                'cost_price' => $request->cost_price,
                 'selling_price' => $request->selling_price,
             ]);
         });
 
-        return redirect()
-            ->route('admin.products.index')
+        return redirect()->route('admin.products.index')
             ->with('success', 'Product updated successfully');
     }
 
