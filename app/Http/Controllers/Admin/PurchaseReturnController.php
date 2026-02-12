@@ -7,9 +7,9 @@ use App\Models\Purchase;
 use App\Models\PurchaseReturn;
 use App\Models\PurchaseReturnItem;
 use App\Services\StockService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class PurchaseReturnController extends Controller
 {
@@ -21,6 +21,8 @@ class PurchaseReturnController extends Controller
         $returns = PurchaseReturn::with('purchase.vendor')
             ->latest()
             ->get();
+
+        // return $returns;
 
         return view('admin.purchase-return.index', compact('returns'));
     }
@@ -55,7 +57,7 @@ class PurchaseReturnController extends Controller
             // Create return master
             $return = PurchaseReturn::create([
                 'purchase_id' => $request->purchase_id,
-                'return_no' => 'PR-' . time(),
+                'return_no' => 'PR-'.time(),
                 'return_date' => $request->return_date,
                 'total' => 0,
                 'note' => $request->note,
@@ -75,7 +77,7 @@ class PurchaseReturnController extends Controller
                     ->first();
 
                 // Safety check
-                if (!$purchaseItem || $item['qty'] > $purchaseItem->qty) {
+                if (! $purchaseItem || $item['qty'] > $purchaseItem->qty) {
                     throw new \Exception('Invalid return quantity');
                 }
 
@@ -93,7 +95,7 @@ class PurchaseReturnController extends Controller
                 StockService::decrease(
                     $item['product_id'],
                     $item['qty'],
-                    'Purchase Return #' . $return->return_no
+                    'Purchase Return #'.$return->return_no
                 );
 
                 $grandTotal += $lineTotal;
@@ -113,21 +115,23 @@ class PurchaseReturnController extends Controller
      */
     public function show(PurchaseReturn $purchaseReturn)
     {
+        // return $purchaseReturn;
         $purchaseReturn->load('items.product', 'purchase.vendor');
 
         return view('admin.purchase-return.show', compact('purchaseReturn'));
     }
+
     public function pdf(PurchaseReturn $purchaseReturn)
-{
-    $purchaseReturn->load('items.product', 'purchase.vendor');
+    {
+        $purchaseReturn->load('items.product', 'purchase.vendor');
 
-    $pdf = Pdf::loadView(
-        'admin.purchase-return.pdf',
-        compact('purchaseReturn')
-    );
+        $pdf = Pdf::loadView(
+            'admin.purchase-return.pdf',
+            compact('purchaseReturn')
+        );
 
-    return $pdf->download(
-        $purchaseReturn->return_no . '.pdf'
-    );
-}
+        return $pdf->download(
+            $purchaseReturn->return_no.'.pdf'
+        );
+    }
 }

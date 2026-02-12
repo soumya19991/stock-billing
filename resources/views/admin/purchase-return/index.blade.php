@@ -32,7 +32,7 @@
                                         <td>{{ $return->return_date }}</td>
                                         <td>₹{{ number_format($return->total, 2) }}</td>
                                         <td class="text-end">
-                                            <a href="{{ route('admin.purchase-returns.show', $return->id) }}"
+                                            <a href="{{ route('admin.purchase-returns.show', $return) }}"
                                                 class="btn btn-sm btn-outline-primary">
                                                 View
                                             </a>
