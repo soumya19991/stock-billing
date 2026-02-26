@@ -14,6 +14,7 @@
                 </div>
 
                 <div class="card-body">
+                    <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
@@ -54,6 +55,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    </div>
                 </div>
 
             </div>
