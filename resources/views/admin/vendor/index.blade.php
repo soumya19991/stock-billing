@@ -14,37 +14,39 @@
 
                 <div class="card">
                     <div class="card-body p-0">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Phone</th>
-                                    <th>GST</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($vendors as $vendor)
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead>
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $vendor->name }}</td>
-                                        <td>{{ $vendor->phone }}</td>
-                                        <td>{{ $vendor->gst_no }}</td>
-                                        <td>
-                                            <span class="badge {{ $vendor->status ? 'bg-success' : 'bg-danger' }}">
-                                                {{ $vendor->status ? 'Active' : 'Inactive' }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('admin.vendors.edit', $vendor->id) }}"
-                                                class="btn btn-sm btn-warning">Edit</a>
-                                        </td>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>GST</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($vendors as $vendor)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $vendor->name }}</td>
+                                            <td>{{ $vendor->phone }}</td>
+                                            <td>{{ $vendor->gst_no }}</td>
+                                            <td>
+                                                <span class="badge {{ $vendor->status ? 'bg-success' : 'bg-danger' }}">
+                                                    {{ $vendor->status ? 'Active' : 'Inactive' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('admin.vendors.edit', $vendor->id) }}"
+                                                    class="btn btn-sm btn-warning">Edit</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
